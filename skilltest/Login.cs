@@ -96,18 +96,31 @@ namespace skilltest
         {
             SqlCommand check = new SqlCommand("Select * from Accounts where email = @email", conn);
             check.Parameters.AddWithValue("@email", txtemail.Text);
+            conn.Close();
             conn.Open();
+
             SqlDataReader checkifExist = check.ExecuteReader();
-    
-            if(checkifExist.HasRows)
+
+            if (checkifExist.HasRows)
             {
-                conn.Close();
-                MessageBox.Show("Welcome!", "Greetings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
-                home = new Thread(goHome);
-                home.SetApartmentState (ApartmentState.STA);
-                home.Start();
+                checkifExist.Read();
+                string passwordfromdb = checkifExist["password"].ToString();
+                if (txtpass.Text == passwordfromdb)
+                {
+
+                    conn.Close();
+                    MessageBox.Show("Welcome!", "Greetings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                    home = new Thread(goHome);
+                    home.SetApartmentState(ApartmentState.STA);
+                    home.Start();
+                }
+                else
+                {
+                    MessageBox.Show("Email or password incorrect", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
+           
         }
 
         private void linkFpass_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
